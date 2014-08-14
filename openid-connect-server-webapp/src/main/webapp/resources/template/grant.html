@@ -106,6 +106,7 @@
 
 
 	<td>
+<<<<<<< HEAD:openid-connect-server-webapp/src/main/webapp/resources/template/grant.html
 		<div>
 			<i>Authorized:</i> <span title="<%- formattedDate.hoverCreationDate %>"><%- formattedDate.displayCreationDate %></span>
 		</div>
@@ -117,6 +118,17 @@
 		<div>
 			<i>Expires:</i> <span title="<%- formattedDate.hoverTimeoutDate %>"><%- formattedDate.displayTimeoutDate %></span>
 		</div>
+=======
+		<%= formattedDate.creationDate %>
+	</td>
+
+	<td>
+		<%= formattedDate.accessDate %>
+	</td>
+
+	<td>
+		<%= formattedDate.timeoutDate %>
+>>>>>>> FETCH_HEAD:openid-connect-server/src/main/webapp/resources/template/grant.html
 	</td>
 
     <td>

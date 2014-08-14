@@ -24,6 +24,8 @@ ALTER TABLE system_scope ADD COLUMN structured_param_description VARCHAR(256);
 
 ALTER TABLE user_info ADD COLUMN phone_number_verified BOOLEAN;
 
+ALTER TABLE taxe_user_info ADD COLUMN phone_number_verified BOOLEAN;
+
 DROP TABLE client_nonce;
 
 DROP TABLE event;
@@ -33,6 +35,8 @@ DROP TABLE IF EXISTS authorities_TEMP;
 DROP TABLE IF EXISTS users_TEMP;
 
 DROP TABLE IF EXISTS user_info_TEMP;
+
+DROP TABLE IF EXISTS taxe_user_info_TEMP;
 
 DROP TABLE IF EXISTS client_details_TEMP;
 

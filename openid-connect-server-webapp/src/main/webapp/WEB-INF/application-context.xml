@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
+<<<<<<< HEAD:openid-connect-server-webapp/src/main/webapp/WEB-INF/application-context.xml
   Copyright 2014 The MITRE Corporation 
+=======
+  Copyright 2013 The MITRE Corporation
+>>>>>>> FETCH_HEAD:openid-connect-server/src/main/webapp/WEB-INF/application-context.xml
     and the MIT Kerberos and Internet Trust Consortium
   
   Licensed under the Apache License, Version 2.0 (the "License");
@@ -31,6 +35,7 @@
 
 	<!-- Scan for components -->
 	<context:component-scan annotation-config="true" base-package="org.mitre" />
+	<context:component-scan annotation-config="true" base-package="com.nouveauxterritoires" />
 
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
@@ -74,7 +79,11 @@
 		<security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
 		<!-- include this only if you need to authenticate clients via request parameters -->
 		<security:custom-filter ref="clientAssertiontokenEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
+<<<<<<< HEAD:openid-connect-server-webapp/src/main/webapp/WEB-INF/application-context.xml
 		<security:custom-filter ref="clientCredentialsTokenEndpointFilter" after="BASIC_AUTH_FILTER" />
+=======
+		<security:custom-filter ref="clientCredentialsTokenEndpointFilter" before="BASIC_AUTH_FILTER" />
+>>>>>>> FETCH_HEAD:openid-connect-server/src/main/webapp/WEB-INF/application-context.xml
 		<security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
 		<security:access-denied-handler ref="oauthAccessDeniedHandler" />
 	</security:http>
@@ -129,7 +138,11 @@
 		<security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
 <!-- 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" /> -->
 		<security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+<<<<<<< HEAD:openid-connect-server-webapp/src/main/webapp/WEB-INF/application-context.xml
 		<security:custom-filter ref="clientCredentialsIntrospectionEndpointFilter" after="BASIC_AUTH_FILTER" />
+=======
+		<security:custom-filter ref="clientCredentialsIntrospectionEndpointFilter" before="BASIC_AUTH_FILTER" />
+>>>>>>> FETCH_HEAD:openid-connect-server/src/main/webapp/WEB-INF/application-context.xml
 	</security:http>
 
 	<security:http pattern="/revoke**"
@@ -140,7 +153,11 @@
 		<security:http-basic entry-point-ref="oauthAuthenticationEntryPoint" />
 <!-- 		<security:custom-filter ref="resourceServerFilter" before="PRE_AUTH_FILTER" /> -->
 		<security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
+<<<<<<< HEAD:openid-connect-server-webapp/src/main/webapp/WEB-INF/application-context.xml
 		<security:custom-filter ref="clientCredentialsRevocationEndpointFilter" after="BASIC_AUTH_FILTER" />
+=======
+		<security:custom-filter ref="clientCredentialsRevocationEndpointFilter" before="BASIC_AUTH_FILTER" />
+>>>>>>> FETCH_HEAD:openid-connect-server/src/main/webapp/WEB-INF/application-context.xml
 	</security:http>
 
 	<bean id="oauthAuthenticationEntryPoint" class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
@@ -227,5 +244,7 @@
 
 	<!-- import application-local configuration information (such as bean definitions) -->
 	<import resource="local-config.xml" />
+        
+	<!--<import resource="common-annotation.xml" />-->
 
 </beans>
