@@ -89,7 +89,11 @@
 
 <script type="text/html" id="tmpl-user-profile-element">
 
-            <dt><%- key %></dt>
-            <dd><%- value %></dd>
+            <div class="control-group">
+                <label class="control-label"><%= key %></label>
+                <div class="controls">
+					<div><%= value %></div>
+                </div>
+            </div>
 
 </script>

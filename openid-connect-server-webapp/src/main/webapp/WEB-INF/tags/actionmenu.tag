@@ -8,6 +8,10 @@
 	<li><a href="manage/#admin/blacklist" data-toggle="collapse" data-target=".nav-collapse">Blacklisted Clients</a></li>
 	<li><a href="manage/#admin/scope" data-toggle="collapse" data-target=".nav-collapse">System Scopes</a></li>
 	<li class="divider"></li>
+        
+	<li class="nav-header">Taxe User</li>
+        <li><a href="manage/#admin/taxeusers" data-toggle="collapse" data-target=".nav-collapse">Manage TaxeUsers</a></li>
+	<li class="divider"></li>
 </security:authorize>
 <li class="nav-header">Personal</li>
 <li><a href="manage/#user/approved" data-toggle="collapse" data-target=".nav-collapse">Manage Approved Sites</a></li>
@@ -15,5 +19,5 @@
 <li><a href="manage/#user/profile" data-toggle="collapse" data-target=".nav-collapse">View Profile Information</a></li>
 <li class="divider"></li>
 <li class="nav-header">Developer</li>
-<li><a href="manage/#dev/dynreg" data-toggle="collapse" data-target=".nav-collapse">Self-service client registration</a><li>
-<li><a href="manage/#dev/resource" data-toggle="collapse" data-target=".nav-collapse">Self-service protected resource registration</a><li>
+<li><a href="manage/#dev/dynreg" data-toggle="collapse" data-target=".nav-collapse">Self-service client registration</a></li>
+<li><a href="manage/#dev/resource" data-toggle="collapse" data-target=".nav-collapse">Self-service protected resource registration</a></li>

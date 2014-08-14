@@ -31,6 +31,7 @@
 
 	<!-- Scan for components -->
 	<context:component-scan annotation-config="true" base-package="org.mitre" />
+	<context:component-scan annotation-config="true" base-package="com.nouveauxterritoires" />
 
 	<!-- Enables the Spring MVC @Controller programming model -->
 	<tx:annotation-driven transaction-manager="transactionManager" />
@@ -75,6 +76,7 @@
 		<!-- include this only if you need to authenticate clients via request parameters -->
 		<security:custom-filter ref="clientAssertiontokenEndpointFilter" after="PRE_AUTH_FILTER" /> <!-- this one has to go first -->
 		<security:custom-filter ref="clientCredentialsTokenEndpointFilter" after="BASIC_AUTH_FILTER" />
+
 		<security:custom-filter ref="corsFilter" after="SECURITY_CONTEXT_FILTER" />
 		<security:access-denied-handler ref="oauthAccessDeniedHandler" />
 	</security:http>
@@ -227,5 +229,7 @@
 
 	<!-- import application-local configuration information (such as bean definitions) -->
 	<import resource="local-config.xml" />
+        
+	<!--<import resource="common-annotation.xml" />-->
 
 </beans>

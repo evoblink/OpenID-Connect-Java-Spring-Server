@@ -25,6 +25,7 @@
 <script type="text/javascript" src="resources/js/lib/bootpag.js"></script>
 <c:if test="${js != null && js != ''}">
 	<script type="text/javascript" src="resources/js/client.js"></script>
+	<script type="text/javascript" src="resources/js/taxeuser.js"></script>
 	<script type="text/javascript" src="resources/js/grant.js"></script>
 	<script type="text/javascript" src="resources/js/scope.js"></script>
 	<script type="text/javascript" src="resources/js/whitelist.js"></script>

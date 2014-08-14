@@ -423,6 +423,10 @@ var AppRouter = Backbone.Router.extend({
         "admin/clients":"listClients",
         "admin/client/new":"newClient",
         "admin/client/:id":"editClient",
+        
+        "admin/taxeusers":"listTaxeUsers",
+        "admin/taxeuser/new":"newTaxeUser",
+        "admin/taxeuser/:id":"editTaxeUser",
 
         "admin/whitelists":"whiteList",
         "admin/whitelist/new/:cid":"newWhitelist",
@@ -461,6 +465,7 @@ var AppRouter = Backbone.Router.extend({
     initialize:function () {
 
         this.clientList = new ClientCollection();
+        this.taxeUserList = new TaxeUserCollection();
         this.whiteListList = new WhiteListCollection();
         this.blackListList = new BlackListCollection();
         this.approvedSiteList = new ApprovedSiteCollection();
@@ -604,6 +609,152 @@ var AppRouter = Backbone.Router.extend({
     		        view.load(function() {
     		        	$('#content').html(view.render().el);
     		        	setPageTitle("Edit Client");
+    		        });
+    		        
+    			
+    			},
+    			error: function(model, response, options) {
+            		
+					//Pull out the response text.
+					var responseJson = JSON.parse(response.responseText);
+            		
+            		//Display an alert with an error message
+					$('#modalAlert div.modal-header').html(responseJson.error);
+	        		$('#modalAlert div.modal-body').html(responseJson.error_description);
+            		
+        			 $("#modalAlert").modal({ // wire up the actual modal functionality and show the dialog
+        				 "backdrop" : "static",
+        				 "keyboard" : true,
+        				 "show" : true // ensure the modal is shown immediately
+        			 });
+    				
+    			}
+    	});
+
+    },
+
+    
+
+    listTaxeUsers:function () {
+
+    	if (!isAdmin()) {
+    		this.root();
+    		return;
+    	}
+    	
+        this.breadCrumbView.collection.reset();
+        this.breadCrumbView.collection.add([
+            {text:"Home", href:""},
+            {text:"Manage TaxeUsers", href:"manage/#admin/taxeusers"}
+        ]);
+        
+        this.updateSidebar('admin/taxeusers');
+
+        var view = new TaxeUserListView({model:this.taxeUserList, stats: this.clientStats, systemScopeList: this.systemScopeList, whiteListList: this.whiteListList});
+        
+        view.load(function() {
+        	$('#content').html(view.render().el);
+        	view.delegateEvents();
+        	setPageTitle("Manage TaxeUsers");        	
+        });
+
+    },
+
+    newTaxeUser:function() {
+
+    	if (!isAdmin()) {
+    		this.root();
+    		return;
+    	}
+
+        this.breadCrumbView.collection.reset();
+        this.breadCrumbView.collection.add([
+            {text:"Home", href:""},
+            {text:"Manage TaxeUsers", href:"manage/#admin/taxeusers"},
+            {text:"New", href:""}
+        ]);
+
+        this.updateSidebar('admin/taxeusers');
+
+        var taxeuser = new TaxeUserModel();
+    	
+        var view = new TaxeUserFormView({model:taxeuser, systemScopeList: this.systemScopeList});
+        view.load(function() {
+        	// set up this new taxeuser to require a secret and have us autogenerate one
+    		var userInfo = getUserInfo();
+    		var contacts = [];
+    		if (userInfo != null && userInfo.email != null) {
+    			contacts.push(userInfo.email);
+    		}
+    		
+        	taxeuser.set({
+        		tokenEndpointAuthMethod: "SECRET_BASIC",
+        		generateTaxeUserSecret:true,
+        		displayTaxeUserSecret:false,
+        		requireAuthTime:true,
+        		defaultMaxAge:60000,
+        		scope: _.uniq(_.flatten(app.systemScopeList.defaultScopes().pluck("value"))),
+        		accessTokenValiditySeconds:3600,
+        		idTokenValiditySeconds:600,
+        		grantTypes: ["authorization_code"],
+        		responseTypes: ["code"],
+        		subjectType: "PUBLIC",
+        		contacts: contacts
+        	}, { silent: true });
+        	
+        	
+        	$('#content').html(view.render().el);
+        	setPageTitle("New TaxeUser");
+        });
+    },
+
+    editTaxeUser:function(id) {
+
+    	if (!isAdmin()) {
+    		this.root();
+    		return;
+    	}
+
+        this.breadCrumbView.collection.reset();
+        this.breadCrumbView.collection.add([
+            {text:"Home", href:""},
+            {text:"Manage TaxeUsers", href:"manage/#admin/taxeusers"},
+            {text:"Edit", href:"manage/#admin/taxeuser/" + id}
+        ]);
+
+        this.updateSidebar('admin/taxeusers');
+
+        var taxeuser = this.taxeUserList.get(id);
+        
+        if (taxeuser == null) {
+        	// it wasn't in the list, try loading the taxeuser directly
+        	taxeuser = new TaxeUserModel({id: id});
+        }
+
+    	$('#loadingbox').sheet('show');
+    	$('#loading').html('<span class="label" id="loading-scopes">Scopes</span> '
+    			+ '<span class="label" id="loading-taxeuser">TaxeUser</span> ');
+
+        // re-sync the taxeuser every time
+    	taxeuser.fetch({
+    			success: function(taxeuser, response, options) {
+    				$('#loading-taxeuser').addClass('label-success');
+    		        
+    		        if ($.inArray("refresh_token", taxeuser.get("grantTypes")) != -1) {
+    		        	taxeuser.set({
+    		        		allowRefresh: true
+    		        	}, { silent: true });
+    		        }
+    		        
+    		    	taxeuser.set({
+    		    		generateTaxeUserSecret:false,
+    		    		displayTaxeUserSecret:false
+    		    	}, { silent: true });
+    		        
+    		        var view = new TaxeUserFormView({model:taxeuser, systemScopeList: app.systemScopeList});
+    		        view.load(function() {
+    		        	$('#content').html(view.render().el);
+    		        	setPageTitle("Edit TaxeUser");
     		        });
     		        
     			
@@ -949,6 +1100,79 @@ var AppRouter = Backbone.Router.extend({
     	// note that this doesn't actually load the client, that's supposed to happen elsewhere...
     },
     
+    dynRegTaxeUser:function() {
+    	this.breadCrumbView.collection.reset();
+    	this.breadCrumbView.collection.add([
+             {text:"Home", href:""},
+             {text:"DynRegTaxeUser Registration", href:"manage/#dev/dynregtaxeuser"}
+        ]);
+    	
+    	var view = new DynRegTaxeUserRootView({systemScopeList: this.systemScopeList});
+    	
+        this.updateSidebar('dev/dynregtaxeuser');
+        
+    	view.load(function() {
+    			$('#content').html(view.render().el);
+    			
+    			setPageTitle("Self-service dynRegTaxeUser Registration");
+    	});
+    	
+    },
+    
+    newDynRegTaxeUser:function() {
+    	this.breadCrumbView.collection.reset();
+    	this.breadCrumbView.collection.add([
+             {text:"Home", href:""},
+             {text:"DynRegTaxeUser Registration", href:"manage/#dev/dynregtaxeuser"},
+             {text:"New", href:"manage/#dev/dynregtaxeuser/new"}
+        ]);
+    	
+        this.updateSidebar('dev/dynregtaxeuser');
+        
+    	var taxeuser = new DynRegTaxeUser();
+    	var view = new TaxeUserEditView({model: taxeuser, systemScopeList:this.systemScopeList});
+    	
+    	view.load(function() {
+
+    		var userInfo = getUserInfo();
+    		var contacts = [];
+    		if (userInfo != null && userInfo.email != null) {
+    			contacts.push(userInfo.email);
+    		}
+    		
+    		taxeuser.set({
+        		require_auth_time:true,
+        		default_max_age:60000,
+        		scope: _.uniq(_.flatten(app.systemScopeList.defaultTaxeUserScopes().pluck("value"))).join(" "),
+        		token_endpoint_auth_method: 'taxeuser_secret_basic',
+        		grant_types: ["authorization_code"],
+        		response_types: ["code"],
+        		subject_type: "public",
+        		contacts: contacts
+        	}, { silent: true });
+    	
+    		$('#content').html(view.render().el);
+    		view.delegateEvents();
+    		setPageTitle("Dynamically Register a New DynRegTaxeUser");
+    		
+    	});
+    	
+    },
+    
+    editDynRegTaxeUser:function() {
+    	this.breadCrumbView.collection.reset();
+    	this.breadCrumbView.collection.add([
+             {text:"Home", href:""},
+             {text:"DynRegTaxeUser Registration", href:"manage/#dev/dynregtaxeuser"},
+             {text:"Edit", href:"manage/#dev/dynregtaxeuser/edit"}
+        ]);
+    	
+        this.updateSidebar('dev/dynregtaxeuser');
+        
+    	setPageTitle("Edit a Dynamically Registered DynRegTaxeUser");
+    	// note that this doesn't actually load the taxeuser, that's supposed to happen elsewhere...
+    },
+    
     resReg:function() {
     	this.breadCrumbView.collection.reset();
     	this.breadCrumbView.collection.add([
@@ -989,7 +1213,7 @@ var AppRouter = Backbone.Router.extend({
     		}
     		
     		client.set({
-        		scope: _.uniq(_.flatten(app.systemScopeList.defaultDynRegScopes().pluck("value"))).join(" "),
+        		scope: _.uniq(_.flatten(app.systemScopeList.defaultTaxeUserScopes().pluck("value"))).join(" "),
         		token_endpoint_auth_method: 'client_secret_basic',
         		contacts: contacts
         	}, { silent: true });
@@ -1055,10 +1279,12 @@ $(function () {
     // load templates and append them to the body
     $.get('resources/template/admin.html', _load);
     $.get('resources/template/client.html', _load);
+    $.get('resources/template/taxeuser.html', _load);
     $.get('resources/template/grant.html', _load);
     $.get('resources/template/scope.html', _load);
     $.get('resources/template/whitelist.html', _load);
     $.get('resources/template/dynreg.html', _load);
+    $.get('resources/template/dynregtaxeuser.html', _load);
     $.get('resources/template/rsreg.html', _load);
     $.get('resources/template/token.html', _load);
     

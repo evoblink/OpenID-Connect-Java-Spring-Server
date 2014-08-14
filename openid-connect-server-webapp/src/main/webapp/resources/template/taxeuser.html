@@ -1,0 +1,315 @@
+<!-- 
+ Copyright 2014 The MITRE Corporation 
+   and the MIT Kerberos and Internet Trust Consortium
+ 
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+ 
+   http://www.apache.org/licenses/LICENSE-2.0
+ 
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<!-- taxeuser -->
+
+<script type="text/html" id="tmpl-taxeuser">
+    <td>
+        <% if (count == 0) { %>
+        <span class="label label-important">0</span>
+        <% } else if (count != null) { %>
+        <span class="label label-info"><%- count %></span>
+        <% } else { %>
+        <span class="label label-warning">?</span>
+        <% } %>
+    </td>
+
+    <td>
+        <div>
+            <span class="taxeuserid-substring" title="<%- taxeuser.sub %> (click to display taxeuser sub)"><%- taxeuser.name != null ? taxeuser.name : ( taxeuser.sub.substr(0,8) + '...' ) %></span>
+        </div>
+        <div>
+            <input type="text" readonly style="cursor: text" class="taxeuserid-full input-xxlarge" value="<%- taxeuser.taxeuserId %>" />
+        </div>
+        <div>
+            <% if (taxeuser.emailVerified) { %>
+            <span class="label label-inverse email-verified"><i class="icon-globe icon-white"></i></span>
+            <% } %>
+            <% if (taxeuser.phoneNumberVerified) { %>
+            <span class="label label-inverse phone-numberVerified"><i class="icon-eye-open icon-white"></i></span>
+            <% } %>
+        </div>
+        <div>
+            <small class="muted" title="<%- hoverCreationDate %>"><i class="icon-time"></i> Registered <%- displayCreationDate %></small>
+        </div>
+        <div class="matched text-info">
+            <small><i>Matched: <span class="label"></span></i></small>
+        </div>
+    </td>
+
+    <td>
+        <div class="taxeuser-more-info-block"></div>
+        <div class="scope-list"></div>
+    </td>
+
+    <td>
+        <div class="btn-group pull-right">
+            <button class="btn btn-edit-taxeuser"><i class="icon-edit"></i> Edit</button> &nbsp;
+            <% if (whiteList != null) { %> 
+            <button class="btn btn-warning btn-whitelist"><i class="icon-wrench icon-white"></i> Whitelist</button> &nbsp;
+            <% } else { %>
+            <button class="btn btn-warning btn-whitelist"><i class="icon-plus-sign icon-white"></i> Whitelist</button> &nbsp;
+            <% } %>
+            <button class="btn btn-danger btn-delete-taxeuser"><i class="icon-trash icon-white"></i> Delete</button>
+        </div>
+    </td>
+
+</script>
+
+<script type="text/html" id="tmpl-taxeuser-table">
+    <div class="well well-small">
+        <button class="btn btn-small refresh-table"><i class="icon-refresh"></i> Refresh</button> &nbsp;
+        <button class="btn btn-small btn-primary new-taxeuser"><i class="icon-plus icon-white"></i> New TaxeUser</button>
+        <div class="form-search pull-right">
+            <div class="input-append">
+                <input type="text" class="search-query" placeholder="Search...">
+                <button class="btn">&times;</button>
+            </div>
+        </div>
+    </div>
+
+
+    <div id="taxeuser-table-search-empty" class="alert alert-warning">
+        There are no taxeusers that match your search criteria.
+    </div>
+
+    <div id="taxeuser-table-empty" class="alert alert-info">
+        There are no registered taxeusers on this server.
+    </div>
+
+    <div class="pagination paginator"></div>
+
+    <table id="taxeuser-table" class="table table-hover table-striped">
+        <thead>
+            <tr>
+                <th></th>
+                <th>TaxeUser</th>
+                <th>Information</th>
+                <th><i class="icon-edit"></i></th>
+            </tr>
+        </thead>
+        <tbody>
+        </tbody>
+    </table>
+
+    <div class="pagination paginator"></div>
+
+    <div class="well well-small">
+        <button class="btn btn-small refresh-table"><i class="icon-refresh"></i> Refresh</button> &nbsp; 
+        <button class="btn btn-small btn-primary new-taxeuser"><i class="icon-plus icon-white"></i> New TaxeUser</button>
+    </div>
+</script>
+
+<script type="text/html" id="tmpl-taxeuser-form">
+
+    <h1><%-(id == null ? 'New' : 'Edit')%> TaxeUser</h1>
+
+    <form class="form-horizontal tabbable">
+        <fieldset>
+            <div class="well well-small">
+                <button class="btn btn-small btn-save btn-success"><i class="icon-ok-circle icon-white"></i> Save</button> &nbsp; 
+                <button class="btn btn-small btn-cancel"><i class="icon-ban-circle"></i> Cancel</button>
+            </div>
+
+            <ul class="nav nav-tabs">
+                <li class="active"><a data-target="#taxeuser-main-tab" data-toggle="tab" href="#">Main</a></li>
+                <li><a data-target="#taxeuser-coordonnees-tab" data-toggle="tab" href="#">Coordonnées</a></li>
+                <li><a data-target="#taxeuser-date-tab" data-toggle="tab" href="#">Date</a></li>
+            </ul>
+
+            <div class="tab-content">
+                <div class="tab-pane active" id="taxeuser-main-tab">
+
+                    <div class="control-group" id="taxeuser-sub">
+                        <label class="control-label">Taxeuser sub</label>
+                        <div class="controls">
+                            <input value="<%-sub%>" maxlength="100" type="text" class="" placeholder="Type something">
+                            <p class="help-block">Unique identifier. If you leave this blank it will be automatically generated.</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-preferredUsername">
+                        <label class="control-label">preferredUsername</label>
+                        <div class="controls">
+                            <input value="<%-preferredUsername%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-name">
+                        <label class="control-label">TaxeUser name</label>
+                        <div class="controls">
+                            <input value="<%-name%>" maxlength="100" type="text" class="" placeholder="Type something">
+                            <p class="help-block">Human-readable application name</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-givenName">
+                        <label class="control-label">givenName</label>
+                        <div class="controls">
+                            <input value="<%-givenName%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-familyName">
+                        <label class="control-label">familyName</label>
+                        <div class="controls">
+                            <input value="<%-familyName%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-middleName">
+                        <label class="control-label">middleName</label>
+                        <div class="controls">
+                            <input value="<%-middleName%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-nickname">
+                        <label class="control-label">nickname</label>
+                        <div class="controls">
+                            <input value="<%-nickname%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-gender">
+                        <label class="control-label">gender</label>
+                        <div class="controls">
+                            <input value="<%-gender%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-profile">
+                        <label class="control-label">profile</label>
+                        <div class="controls">
+                            <input value="<%-profile%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group" id="taxeuser-picture">
+                        <label class="control-label">picture</label>
+                        <div class="controls">
+                            <input placeholder="https://" value="<%-picture%>" maxlength="1000" type="text" class=""/>
+                            <p class="help-block">URL that points to a picture, will be displayed on approval page</p>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-birthdate">
+                        <label class="control-label">birthdate</label>
+                        <div class="controls">
+                            <input value="<%-birthdate%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+                    
+                    <div class="control-group" id="taxeuser-website">
+                        <label class="control-label">Website</label>
+                        <div class="controls">
+                            <input placeholder="https://" value="<%-website%>" maxlength="1000" type="text" class=""/>
+                            <p class="help-block">URL for the TaxeUser's website, will be displayed to the user</p>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="tab-pane" id="taxeuser-coordonnees-tab">
+
+                    <div class="control-group" id="taxeuser-email">
+                        <label class="control-label">email</label>
+                        <div class="controls">
+                            <input value="<%-email%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-emailVerified">
+                        <label class="control-label">emailVerified</label>
+                        <div class="controls">
+                            <p class="help-block"><%-emailVerified%></p>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-phoneNumber">
+                        <label class="control-label">phoneNumber</label>
+                        <div class="controls">
+                            <input value="<%-phoneNumber%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-phoneNumberVerified">
+                        <label class="control-label">phoneNumberVerified</label>
+                        <div class="controls">
+                            <p class="help-block"><%-phoneNumberVerified%></p>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-address">
+                        <label class="control-label">address</label>
+                        <div class="controls">
+                            <textarea class="input-xlarge" placeholder="Type a address" maxlength="200"
+                                      rows="3"><%-address%></textarea>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="tab-pane" id="taxeuser-date-tab">
+
+                    <div class="control-group" id="taxeuser-createdAt">
+                        <label class="control-label">Registered at</label>
+                        <div class="controls">
+                            <%-createdAt%>
+                        </div>
+                    </div>
+
+                    <div class="control-group" id="taxeuser-updatedTime">
+                        <label class="control-label">updatedTime</label>
+                        <div class="controls">
+                            <input value="<%-updatedTime%>" maxlength="100" type="text" class="" placeholder="Type something">
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="well well-small">
+                    <button class="btn btn-small btn-save btn-success"><i class="icon-ok-circle icon-white"></i> Save</button> &nbsp; 
+                    <button class="btn btn-small btn-cancel"><i class="icon-ban-circle"></i> Cancel</button>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+</script>
+
+<script type="text/html" id="tmpl-taxeuser-saved">
+
+    <div>
+        <strong>ID:</strong> <input type="text" readonly style="cursor: text" class="token-full input-xxlarge" value="<%- id %>" />
+
+    </div>
+    <% if (subChanged) { %>
+    <div>
+        <strong>Taxeuser sub</strong> <button class="btn btn-mini" id="taxeuserSaveShow">Show Sub</button>
+        <input type="text" id="taxeuser-savedSub" readonly style="cursor: text" class="token-full input-xxlarge" value="<%- sub %>" />
+    </div>
+    <% } else if (sub == null || sub == '') { %>
+    <div>
+        <i>No taxeuser sub</i>
+    </div>
+    <% } else { %>
+    <div>
+        <strong>Sub:</strong> <i>unchanged</i>
+    </div>
+    <% } %>
+
+</script>
