@@ -25,7 +25,7 @@
   </parent>
   <artifactId>openid-connect-client</artifactId>
   <description>OpenID Connect Client filter for Spring Security</description>
-  <name>OpenID Connect Client</name>
+  <name>E-Territoires OpenID Connect Client</name>
   <dependencies>
     <dependency>
       <groupId>org.mitre</groupId>
