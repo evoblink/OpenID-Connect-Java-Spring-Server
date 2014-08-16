@@ -8,7 +8,7 @@
   </parent>
   <artifactId>openid-connect-server-webapp</artifactId>
   <packaging>war</packaging>
-  <name>OpenID Connect Server Webapp</name>
+  <name>E-Territoires OpenID Connect Server Webapp</name>
   <build>
         <plugins>
             <plugin>
@@ -148,6 +148,10 @@
             <artifactId>jstl</artifactId>
             <version>1.2</version>
         </dependency>
-
+        <dependency>
+                <groupId>mysql</groupId>
+                <artifactId>mysql-connector-java</artifactId>
+                <version>5.1.30</version>
+        </dependency>
   </dependencies>
 </project>

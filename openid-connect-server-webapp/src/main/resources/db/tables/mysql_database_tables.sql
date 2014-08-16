@@ -74,7 +74,7 @@ CREATE TABLE IF NOT EXISTS blacklisted_site (
 CREATE TABLE IF NOT EXISTS client_details (
 	id BIGINT AUTO_INCREMENT PRIMARY KEY,
 	
-	client_description VARCHAR(1024),
+	client_description TEXT(1024),
 	reuse_refresh_tokens BOOLEAN NOT NULL DEFAULT 1,
 	dynamically_registered BOOLEAN NOT NULL DEFAULT 0,
 	allow_introspection BOOLEAN NOT NULL DEFAULT 0,
@@ -194,7 +194,8 @@ CREATE TABLE IF NOT EXISTS user_info (
 	phone_number_verified BOOLEAN,
 	address_id VARCHAR(256),
 	updated_time VARCHAR(256),
-	birthdate VARCHAR(256)
+	birthdate VARCHAR(256),
+        unique(preferred_username)
 );
 
 CREATE TABLE IF NOT EXISTS taxe_user_info (
@@ -219,7 +220,8 @@ CREATE TABLE IF NOT EXISTS taxe_user_info (
 	address_id VARCHAR(256),
 	updated_time VARCHAR(256),
 	birthdate VARCHAR(256),
-	created_at TIMESTAMP
+	created_at TIMESTAMP,
+        unique(preferred_username)
 );
 
 CREATE TABLE IF NOT EXISTS whitelisted_site (
