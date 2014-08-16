@@ -45,6 +45,7 @@ import com.nimbusds.jose.crypto.RSAEncrypter;
 import com.nimbusds.jose.jwk.JWK;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
 import com.nimbusds.jose.jwk.RSAKey;
+import java.util.logging.Level;
 
 /**
  * @author wkim
@@ -109,12 +110,22 @@ public class DefaultJwtEncryptionAndDecryptionService implements JwtEncryptionAn
 
 
 	@PostConstruct
-	public void afterPropertiesSet() throws NoSuchAlgorithmException, InvalidKeySpecException, JOSEException{
+	public void afterPropertiesSet() {//throws NoSuchAlgorithmException, InvalidKeySpecException, JOSEException{
 
+            try {
 		if (keys == null) {
 			throw new IllegalArgumentException("Encryption and decryption service must have at least one key configured.");
 		}
-		buildEncryptersAndDecrypters();
+                buildEncryptersAndDecrypters();
+            } catch (NoSuchAlgorithmException ex) {
+                logger.debug(ex.getMessage());
+            } catch (InvalidKeySpecException ex) {
+                logger.debug(ex.getMessage());
+            } catch (JOSEException ex) {
+                logger.debug(ex.getMessage());
+            } catch (IllegalArgumentException ex) {
+                logger.debug(ex.getMessage());
+            }
 	}
 
 	public String getDefaultEncryptionKeyId() {
